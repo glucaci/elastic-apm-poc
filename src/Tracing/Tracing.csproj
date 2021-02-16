@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Elastic.Apm.NetCoreAll" Version="1.7.1" />
+    <PackageReference Include="HotChocolate.Execution" Version="11.0.9" />
   </ItemGroup>
 
 </Project>

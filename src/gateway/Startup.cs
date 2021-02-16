@@ -1,4 +1,5 @@
 using System;
+using Demo.Tracing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,7 @@ namespace Demo.Gateway
 
             services
                 .AddGraphQLServer()
+                .AddTracing()
                 .AddQueryType(d => d.Name("Query"))
                 .AddRemoteSchema(Accounts, ignoreRootTypes: true)
                 .AddRemoteSchema(Inventory, ignoreRootTypes: true)

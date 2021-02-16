@@ -1,3 +1,4 @@
+using Demo.Tracing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ namespace Demo.Accounts
             services
                 .AddSingleton<UserRepository>()
                 .AddGraphQLServer()
+                .AddTracing()
                 .AddQueryType<Query>();
         }
 

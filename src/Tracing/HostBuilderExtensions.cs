@@ -12,6 +12,6 @@ namespace Demo.Tracing
             return builder.UseElasticApm(
                 new HttpDiagnosticsSubscriber(),
                 new AspNetCoreDiagnosticSubscriber());
-        };
+        }
     }
 }

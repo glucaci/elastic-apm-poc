@@ -1,0 +1,39 @@
+name: elastic-apm
+services:
+  - name: account
+    project: src\accounts\Accounts.csproj
+  - name: gateway
+    project: src\gateway\Gateway.csproj
+  - name: inventory
+    project: src\inventory\Inventory.csproj
+  - name: products
+    project: src\products\Products.csproj
+  - name: reviews
+    project: src\reviews\Reviews.csproj
+
+  - name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
+    bindings:
+      - port: 9200
+    env:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - discovery.type=single-node
+    volumes:
+      - source: ./elastic
+        target: /usr/share/elasticsearch/data
+  - name: kibana
+    image: docker.elastic.co/kibana/kibana:7.11.0
+    bindings:
+      - port: 5601
+    env:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+  - name: apm-server
+    image: docker.elastic.co/apm/apm-server:7.11.0
+    bindings:
+      - port: 8200
+    env:
+      - output.elasticsearch.hosts=['http://elasticsearch:9200']
+      - apm-server.host="0.0.0.0:8200"
+      - setup.kibana.host="kibana:5601"
+

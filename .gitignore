@@ -325,6 +325,9 @@ __pycache__/
 # OpenCover UI analysis results
 OpenCover/
 
+# Elasticsearch volume
+elastic/
+
 # Azure Stream Analytics local run output
 ASALocalRun/
 

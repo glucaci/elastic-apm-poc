@@ -1,17 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Accounts", "accounts\Accounts.csproj", "{3A3BC511-86A3-44B2-858B-CA97933E4151}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Accounts", "accounts\Accounts.csproj", "{3A3BC511-86A3-44B2-858B-CA97933E4151}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway", "gateway\Gateway.csproj", "{7D556817-8C10-4B6B-8BC7-BDD832F98CE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "gateway\Gateway.csproj", "{7D556817-8C10-4B6B-8BC7-BDD832F98CE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventory", "inventory\Inventory.csproj", "{BF940889-6F80-41FB-AF4D-1DF82CA2471C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory", "inventory\Inventory.csproj", "{BF940889-6F80-41FB-AF4D-1DF82CA2471C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Products", "products\Products.csproj", "{55C91FC3-0575-470C-ACEF-FAFE854F17B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Products", "products\Products.csproj", "{55C91FC3-0575-470C-ACEF-FAFE854F17B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reviews", "reviews\Reviews.csproj", "{F1754125-5445-431F-B5E0-3C585BC31C42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reviews", "reviews\Reviews.csproj", "{F1754125-5445-431F-B5E0-3C585BC31C42}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tracing", "Tracing\Tracing.csproj", "{C887720D-DB3F-48D7-8F3B-7C2B2942F192}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{3A3BC511-86A3-44B2-858B-CA97933E4151}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -86,5 +85,23 @@ Global
 		{F1754125-5445-431F-B5E0-3C585BC31C42}.Release|x64.Build.0 = Release|Any CPU
 		{F1754125-5445-431F-B5E0-3C585BC31C42}.Release|x86.ActiveCfg = Release|Any CPU
 		{F1754125-5445-431F-B5E0-3C585BC31C42}.Release|x86.Build.0 = Release|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Debug|x64.Build.0 = Debug|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Debug|x86.Build.0 = Debug|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Release|x64.ActiveCfg = Release|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Release|x64.Build.0 = Release|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Release|x86.ActiveCfg = Release|Any CPU
+		{C887720D-DB3F-48D7-8F3B-7C2B2942F192}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7FB9C507-88C5-42C9-A83B-BCF010B6CBE4}
 	EndGlobalSection
 EndGlobal

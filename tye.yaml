@@ -4,22 +4,47 @@ services:
     project: src\gateway\Gateway.csproj
     bindings:
       - port: 5010
+    env:
+      - ELASTIC_APM_SERVICE_NAME=gateway
+      - ELASTIC_APM_ENVIRONMENT=Dev
+      - ELASTIC_APM_SERVER_URLS=http://localhost:8200
+      - ELASTIC_APM_CLOUD_PROVIDER=none
   - name: accounts
     project: src\accounts\Accounts.csproj
     bindings:
       - port: 5011
+    env:
+      - ELASTIC_APM_SERVICE_NAME=accounts
+      - ELASTIC_APM_ENVIRONMENT=Dev
+      - ELASTIC_APM_SERVER_URLS=http://localhost:8200
+      - ELASTIC_APM_CLOUD_PROVIDER=none
   - name: inventory
     project: src\inventory\Inventory.csproj
     bindings:
       - port: 5012
+    env:
+      - ELASTIC_APM_SERVICE_NAME=inventory
+      - ELASTIC_APM_ENVIRONMENT=Dev
+      - ELASTIC_APM_SERVER_URLS=http://localhost:8200
+      - ELASTIC_APM_CLOUD_PROVIDER=none
   - name: products
     project: src\products\Products.csproj
     bindings:
       - port: 5013
+    env:
+      - ELASTIC_APM_SERVICE_NAME=products
+      - ELASTIC_APM_ENVIRONMENT=Dev
+      - ELASTIC_APM_SERVER_URLS=http://localhost:8200
+      - ELASTIC_APM_CLOUD_PROVIDER=none
   - name: reviews
     project: src\reviews\Reviews.csproj
     bindings:
       - port: 5014
+    env:
+      - ELASTIC_APM_SERVICE_NAME=reviews
+      - ELASTIC_APM_ENVIRONMENT=Dev
+      - ELASTIC_APM_SERVER_URLS=http://localhost:8200
+      - ELASTIC_APM_CLOUD_PROVIDER=none
 
   - name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0

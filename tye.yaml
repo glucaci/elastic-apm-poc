@@ -1,15 +1,25 @@
 name: elastic-apm
 services:
-  - name: account
-    project: src\accounts\Accounts.csproj
   - name: gateway
     project: src\gateway\Gateway.csproj
+    bindings:
+      - port: 5010
+  - name: accounts
+    project: src\accounts\Accounts.csproj
+    bindings:
+      - port: 5011
   - name: inventory
     project: src\inventory\Inventory.csproj
+    bindings:
+      - port: 5012
   - name: products
     project: src\products\Products.csproj
+    bindings:
+      - port: 5013
   - name: reviews
     project: src\reviews\Reviews.csproj
+    bindings:
+      - port: 5014
 
   - name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
@@ -17,23 +27,30 @@ services:
       - port: 9200
     env:
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - cluster.name=elastic-apm-poc
+      - cluster.routing.allocation.disk.threshold_enabled=false
       - discovery.type=single-node
+      - ES_JAVA_OPTS=-XX:UseAVX=2 -Xms1g -Xmx1g
     volumes:
       - source: ./elastic
         target: /usr/share/elasticsearch/data
+
   - name: kibana
     image: docker.elastic.co/kibana/kibana:7.11.0
     bindings:
       - port: 5601
     env:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
   - name: apm-server
     image: docker.elastic.co/apm/apm-server:7.11.0
     bindings:
       - port: 8200
     env:
+      - apm-server.rum.enabled=true
+      - setup.kibana.host=kibana:5601
+      - setup.template.settings.index.number_of_replicas=0
+      - apm-server.kibana.enabled=true
+      - apm-server.kibana.host=kibana:5601
       - output.elasticsearch.hosts=['http://elasticsearch:9200']
-      - apm-server.host="0.0.0.0:8200"
-      - setup.kibana.host="kibana:5601"
-

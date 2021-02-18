@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Elastic.Apm.Api;
 using HotChocolate.Execution;
 using HotChocolate.Execution.Instrumentation;
 using HotChocolate.Language;
@@ -55,21 +54,6 @@ namespace Demo.Tracing
         public override void ValidationErrors(IRequestContext context, IReadOnlyList<IError> errors)
         {
             Report.Error(errors);
-        }
-    }
-
-    internal class FieldActivityScope : IActivityScope
-    {
-        private readonly ISpan _span;
-
-        public FieldActivityScope(ISpan span)
-        {
-            _span = span;
-        }
-
-        public void Dispose()
-        {
-            _span.End();
         }
     }
 }

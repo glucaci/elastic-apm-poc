@@ -1,5 +1,5 @@
-﻿using System.Collections.Immutable;
-using System.Diagnostics.Tracing;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Elastic.Apm.Api;
 using HotChocolate.Execution;
@@ -21,8 +21,14 @@ namespace Demo.Tracing
 
         public void Dispose()
         {
-            _transaction.Name = GetTransactionName();
+            var operationDetails = GetOperationDetails();
+            _transaction.Name = $"[{operationDetails.Name}] {operationDetails.RootSelection}";
             _transaction.Type = "graphql";
+
+            for (var i = 0; i < operationDetails.Selections.Count; i++)
+            {
+                _transaction.SetLabel($"selection_{i}", operationDetails.Selections.ElementAt(i));
+            }
 
             bool hasErrors = _context.HasException() || _context.Result.HasErrors();
             _transaction.Result = hasErrors ? "Failed" : "Success";
@@ -37,46 +43,53 @@ namespace Demo.Tracing
             {
                 Report.Exception(_context.Exception);
             }
-
-            //_transaction.End(); - only when not using AspNetCoreDiagnosticSubscriber
         }
 
-        private string? GetTransactionName()
+        private OperationDetails GetOperationDetails()
         {
-            string? name;
-            if (!string.IsNullOrEmpty(_context.Request.OperationName))
+            var definitions = _context.Document?.Definitions;
+            if (definitions?.Count > 0)
             {
-                // This is the most used case because the react generated queries always
-                // provide a operation name
-                name = _context.Request.OperationName;
-            }
-            else if (_context.Document?.Definitions.Count == 1 &&
-                     _context.Document.Definitions[0] is OperationDefinitionNode node &&
-                     !string.IsNullOrEmpty(node.Name?.Value))
-            {
-                // This is the case when we don't have a operation name and we have only one
-                // root node which we are trying to resolve.
-                name = node.Name!.Value;
+                string? name = GetOperationName(definitions);
 
-                if (node.SelectionSet.Selections.Count == 1 &&
-                    node.SelectionSet.Selections[0] is FieldNode fieldNode)
-                {
-                    name = $"[{name}] {fieldNode.Name!.Value}";
-                }
-                else if(name == "exec_batch")
-                {
-                    var batchNodes = node.SelectionSet.Selections.OfType<FieldNode>()
-                        .Select(x => x.Name!.Value)
-                        .ToImmutableHashSet();
+                var selections = definitions.GetFieldNodes()
+                    .Select(x => string.IsNullOrEmpty(x.Name.Value) ? "unknown" : x.Name.Value)
+                    .DefaultIfEmpty("unknown")
+                    .ToImmutableHashSet();
 
-                    name = $"{name} ({string.Join(", ", batchNodes)})";
-                }
+                var rootSelection = definitions.Count > 1
+                    ? "multiple"
+                    : name == "exec_batch"
+                        ? selections.Count > 1
+                            ? $"multiple ({definitions.FirstSelectionsCount()})"
+                            : $"{selections.FirstOrDefault()} ({definitions.FirstSelectionsCount()})"
+                        : selections.FirstOrDefault();
+
+                return new OperationDetails(name, rootSelection, selections);
             }
-            else
+
+            return OperationDetails.Empty;
+        }
+
+        private string? GetOperationName(IReadOnlyList<IDefinitionNode> definition)
+        {
+            string? name = _context.Request.OperationName;
+
+            if (string.IsNullOrEmpty(name) &&
+                definition.Count == 1 && 
+                definition[0] is OperationDefinitionNode node)
             {
-                // If no case above is reached we set the query id which is a hash of the query
-                // without a meaningful name but at least will stay together in the same group.
+                name = node.Name?.Value;
+            }
+
+            if (string.IsNullOrEmpty(name) || name == "fetch")
+            {
                 name = _context.Request.QueryId;
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                name = "unnamed";
             }
 
             return name;

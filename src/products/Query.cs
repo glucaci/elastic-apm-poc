@@ -10,7 +10,7 @@ namespace Demo.Products
             [Service] ProductRepository repository) =>
             repository.GetTopProducts(first);
 
-        public Product GetProduct(
+        public Product? GetProduct(
             int upc, 
             [Service] ProductRepository repository) =>
             repository.GetProduct(upc);

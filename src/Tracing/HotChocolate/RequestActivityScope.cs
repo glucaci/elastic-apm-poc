@@ -1,4 +1,7 @@
-﻿using Elastic.Apm.Api;
+﻿using System.Collections.Immutable;
+using System.Diagnostics.Tracing;
+using System.Linq;
+using Elastic.Apm.Api;
 using HotChocolate.Execution;
 using HotChocolate.Execution.Instrumentation;
 using HotChocolate.Language;
@@ -19,7 +22,7 @@ namespace Demo.Tracing
         public void Dispose()
         {
             _transaction.Name = GetTransactionName();
-            _transaction.Type = "GraphQL";
+            _transaction.Type = "graphql";
 
             bool hasErrors = _context.HasException() || _context.Result.HasErrors();
             _transaction.Result = hasErrors ? "Failed" : "Success";
@@ -58,7 +61,15 @@ namespace Demo.Tracing
                 if (node.SelectionSet.Selections.Count == 1 &&
                     node.SelectionSet.Selections[0] is FieldNode fieldNode)
                 {
-                    name += $".{fieldNode.Name!.Value}";
+                    name = $"[{name}] {fieldNode.Name!.Value}";
+                }
+                else if(name == "exec_batch")
+                {
+                    var batchNodes = node.SelectionSet.Selections.OfType<FieldNode>()
+                        .Select(x => x.Name!.Value)
+                        .ToImmutableHashSet();
+
+                    name = $"{name} ({string.Join(", ", batchNodes)})";
                 }
             }
             else

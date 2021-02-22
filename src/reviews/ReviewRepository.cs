@@ -15,9 +15,10 @@ namespace Demo.Reviews
                 new Review(1, 1, 1, "Love it!"),
                 new Review(2, 1, 2, "Too expensive."),
                 new Review(3, 2, 3, "Could be better."),
-                new Review(4, 2, 1, "Prefer something else.")
+                new Review(4, 2, 1, "Prefer something else."),
+                new Review(5, 1, 4, "Hope it works.")
             }.ToDictionary(t => t.Id);
-
+            
             _authors = new Author[] 
             {
                 new Author(1, "@ada"),

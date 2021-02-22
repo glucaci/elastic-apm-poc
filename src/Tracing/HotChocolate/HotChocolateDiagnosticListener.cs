@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HotChocolate.Execution;
 using HotChocolate.Execution.Instrumentation;
 using HotChocolate.Language;
 using HotChocolate.Resolvers;
+using Serilog;
+using Serilog.Events;
 using Agent = Elastic.Apm.Agent;
 using IError = HotChocolate.IError;
 
@@ -23,22 +26,24 @@ namespace Demo.Tracing
 
         public override IActivityScope ResolveFieldValue(IMiddlewareContext context)
         {
+            //return EmptyScope;
+
+            // If Dev
+
             if (context.Path.Depth == 0 &&
                 context.Document.Definitions.Count == 1 &&
                 context.Document.Definitions[0] is OperationDefinitionNode { Name: {Value: "exec_batch" } })
             {
-                var transaction = Agent.Tracer.CurrentTransaction;
                 var span = Agent.Tracer.CurrentSpan;
-
                 if (span != null)
                 {
-                    var fieldSpan = span.StartSpan(context.Field.Name!.Value, "GraphQL Batch");
+                    var fieldSpan = span.StartSpan(context.Field.Name!.Value, "graphql", "batch");
                     return new FieldActivityScope(fieldSpan);
                 }
-
-                if (transaction != null)
+                else
                 {
-                    var fieldSpan = transaction.StartSpan(context.Field.Name!.Value, "GraphQL Batch");
+                    var transaction = Agent.Tracer.CurrentTransaction;
+                    var fieldSpan = transaction.StartSpan(context.Field.Name!.Value, "graphql", "batch");
                     return new FieldActivityScope(fieldSpan);
                 }
             }

@@ -11,9 +11,11 @@ namespace Demo.Products
         {
             _products = new Product[]
             {
-                new Product(1, "Table", 899, 100),
+                // Simulate EXEC_NON_NULL_VIOLATION
+                new Product(1, default, 899, 100),
                 new Product(2, "Couch", 1299, 1000),
-                new Product(3, "Chair", 54, 50)
+                new Product(3, "Chair", 54, 50),
+                new Product(4, "Regal", 1599, 1300)
             }.ToDictionary(t => t.Upc);
         }
 

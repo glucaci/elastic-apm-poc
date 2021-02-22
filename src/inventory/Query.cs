@@ -1,4 +1,6 @@
+using System;
 using HotChocolate;
+using static Demo.Tracing.ShopEventSources;
 
 namespace Demo.Inventory
 {
@@ -6,8 +8,19 @@ namespace Demo.Inventory
     {
         public InventoryInfo GetInventoryInfo(
             int upc, 
-            [Service] InventoryInfoRepository repository) =>
-            repository.GetInventoryInfo(upc);
+            [Service] InventoryInfoRepository repository)
+        {
+            try
+            {
+                return repository.GetInventoryInfo(upc);
+            }
+            catch (Exception ex)
+            {
+                // Simulate critical
+                Log.GetInventoryFailed(ex);
+                throw;
+            }
+        }
 
         public double GetShippingEstimate(int price, int weight) =>
             price > 1000 ? 0 : weight * 0.5;

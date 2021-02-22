@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>9</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <nullable>enable</nullable>
   </PropertyGroup>
 
@@ -19,10 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Thor.Core" Version="4.0.0" />
     <PackageReference Include="Thor.Core.Abstractions" Version="4.0.0" />
-    <PackageReference Include="Thor.Core.Transmission.Abstractions" Version="4.0.0" />
-    <!--<PackageReference Include="Thor.Generator" Version="1.3.3" />-->
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Demo.Tracing.ShopEventSources;
 
 namespace Demo.Inventory
 {
@@ -17,6 +19,25 @@ namespace Demo.Inventory
             }.ToDictionary(t => t.Upc);
         }
 
-        public InventoryInfo GetInventoryInfo(int upc) => _infos[upc];
+        public InventoryInfo GetInventoryInfo(int upc)
+        {
+            // Simulate info
+            Log.GetInventory(upc);
+
+            if (upc > 1)
+            {
+                // Simulate warning
+                Log.LowInventory(_infos.Count);
+            }
+
+            if (upc > 3)
+            {
+                // Simulate error
+                Log.NoProduct(upc);
+                throw new InvalidOperationException($"Invalid product id {upc}");
+            }
+
+            return _infos[upc];
+        }
     }
 }

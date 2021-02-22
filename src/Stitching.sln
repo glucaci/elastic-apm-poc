@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Products", "products\Produc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reviews", "reviews\Reviews.csproj", "{F1754125-5445-431F-B5E0-3C585BC31C42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tracing", "Tracing\Tracing.csproj", "{C887720D-DB3F-48D7-8F3B-7C2B2942F192}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tracing", "Tracing\Tracing.csproj", "{C887720D-DB3F-48D7-8F3B-7C2B2942F192}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

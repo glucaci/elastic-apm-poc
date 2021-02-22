@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Elastic.Apm;
 using HotChocolate;
+using Serilog.Events;
 
 namespace Demo.Tracing
 {
@@ -28,16 +29,18 @@ namespace Demo.Tracing
             {
                 foreach (var error in errors)
                 {
-                    span.CaptureError(
-                        error.Message, error.Path?.ToString(), GetStackFrames(error));
+                    var path = error.Path?.ToString();
+                    span.CaptureError(error.Message, path, GetStackFrames(error));
+                    Serilog.Log.Write(LogEventLevel.Error, $"[{{0}}] Error {path}: {error.Message}", "GraphQL");
                 }
             }
             else
             {
                 foreach (var error in errors)
                 {
-                    transaction.CaptureError(
-                        error.Message, error.Path?.ToString(), GetStackFrames(error));
+                    var path = error.Path?.ToString();
+                    transaction.CaptureError(error.Message, path, GetStackFrames(error));
+                    Serilog.Log.Write(LogEventLevel.Error, $"[{{0}}] Error {path}: {error.Message}", "GraphQL");
                 }
             }
         }
@@ -50,10 +53,12 @@ namespace Demo.Tracing
             if (span != null)
             {
                 span.CaptureException(exception);
+                Serilog.Log.Write(LogEventLevel.Error, $"[{{0}}] Exception: {exception.Message}", "GraphQL");
             }
             else
             {
                 transaction.CaptureException(exception);
+                Serilog.Log.Write(LogEventLevel.Error, $"[{{0}}] Exception: {exception.Message}", "GraphQL");
             }
         }
     }

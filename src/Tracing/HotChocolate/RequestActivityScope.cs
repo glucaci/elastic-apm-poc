@@ -25,10 +25,7 @@ namespace Demo.Tracing
             _transaction.Name = $"[{operationDetails.Name}] {operationDetails.RootSelection}";
             _transaction.Type = ApiConstants.TypeRequest;
 
-            for (var i = 0; i < operationDetails.Selections.Count; i++)
-            {
-                _transaction.SetLabel($"selection_{i}", operationDetails.Selections.ElementAt(i));
-            }
+            _transaction.SetLabel("selections", string.Join(";", operationDetails.Selections));
 
             bool hasErrors = _context.HasException() || _context.Result.HasErrors();
             _transaction.Result = hasErrors ? "Failed" : "Success";

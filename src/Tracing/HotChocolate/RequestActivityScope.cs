@@ -23,7 +23,7 @@ namespace Demo.Tracing
         {
             var operationDetails = GetOperationDetails();
             _transaction.Name = $"[{operationDetails.Name}] {operationDetails.RootSelection}";
-            _transaction.Type = "graphql";
+            _transaction.Type = ApiConstants.TypeRequest;
 
             for (var i = 0; i < operationDetails.Selections.Count; i++)
             {
@@ -89,7 +89,7 @@ namespace Demo.Tracing
 
             if (string.IsNullOrEmpty(name))
             {
-                name = "unnamed";
+                name = Constants.DefaultOperation;
             }
 
             return name;

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Elastic.Apm.Api;
 using HotChocolate.Execution;
 using HotChocolate.Execution.Instrumentation;
 using HotChocolate.Language;
 using HotChocolate.Resolvers;
-using Serilog;
-using Serilog.Events;
 using Agent = Elastic.Apm.Agent;
 using IError = HotChocolate.IError;
 
@@ -16,36 +14,22 @@ namespace Demo.Tracing
     {
         public override IActivityScope ExecuteRequest(IRequestContext context)
         {
-            // If there is no transaction, we are creating a empty transaction
-            // which will be filled with meaningful name and type when request finishes.
-            var transaction = Agent.Tracer.CurrentTransaction
-                ?? Agent.Tracer.StartTransaction(string.Empty, string.Empty);
-
+            var transaction = Agent.Tracer.CurrentTransaction;
             return new RequestActivityScope(context, transaction);
         }
 
         public override IActivityScope ResolveFieldValue(IMiddlewareContext context)
         {
             //return EmptyScope;
-
             // If Dev
-
             if (context.Path.Depth == 0 &&
                 context.Document.Definitions.Count == 1 &&
-                context.Document.Definitions[0] is OperationDefinitionNode { Name: {Value: "exec_batch" } })
+                context.Document.Definitions[0] is OperationDefinitionNode {Name: {Value: "exec_batch"}})
             {
-                var span = Agent.Tracer.CurrentSpan;
-                if (span != null)
-                {
-                    var fieldSpan = span.StartSpan(context.Field.Name!.Value, "graphql", "batch");
-                    return new FieldActivityScope(fieldSpan);
-                }
-                else
-                {
-                    var transaction = Agent.Tracer.CurrentTransaction;
-                    var fieldSpan = transaction.StartSpan(context.Field.Name!.Value, "graphql", "batch");
-                    return new FieldActivityScope(fieldSpan);
-                }
+                var executionSegment = Agent.Tracer.GetCurrentExecutionSegment();
+                var span = executionSegment.StartSpan(
+                    context.Field.Name!.Value, ApiConstants.TypeRequest, Constants.GraphQLType);
+                return new FieldActivityScope(span);
             }
 
             return EmptyScope;

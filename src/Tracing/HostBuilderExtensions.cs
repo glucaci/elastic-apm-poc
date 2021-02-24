@@ -56,12 +56,11 @@ namespace Demo.Tracing
                 .Enrich.WithProperty("Environment", environment)
                 .Enrich.WithProperty("ApplicationName", applicationName)
                 .Enrich.WithProperty("ApplicationPart", applicationPart)
-                .WriteTo.Console()
                 .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
                 {
                     CustomFormatter = new EcsTextFormatter(formatterConfiguration),
                     IndexFormat = $"apm-logs-{environment}-{{0:yyyy.MM.dd}}",
-                    EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog,
+                    EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog
                     //ModifyConnectionSettings = c => c
                     //    .ApiKeyAuthentication("", "")
                     //    .EnableHttpCompression()

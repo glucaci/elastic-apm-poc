@@ -16,4 +16,10 @@
     <ProjectReference Include="..\Tracing\Tracing.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Stitching.graphql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

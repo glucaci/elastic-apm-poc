@@ -49,25 +49,18 @@ namespace Demo.Tracing
         [Event(3, Level = EventLevel.Error, Message = "No product found with id {2}", Version = 1)]
         private void NoProductImpl(int upc)
         {
-            var span = Agent.Tracer.CurrentSpan;
-            if (span != null)
-            {
-                span.CaptureError($"No product found with id {upc}", EventName, new StackFrame[0], default, new Dictionary<string, Label>
+            var executionSegment = Agent.Tracer.GetCurrentExecutionSegment();
+            executionSegment.CaptureError(
+                $"No product found with id {upc}", 
+                EventName, 
+                new StackFrame[0], 
+                executionSegment.ParentId,
+                new Dictionary<string, Label>
                 {
                     {"EventSourcesName", new Label(EventName)},
                     {"EventSourcesType", new Label("Error")}
                 });
-            }
-            else
-            {
-                var transaction = Agent.Tracer.CurrentTransaction;
-                transaction.CaptureError($"No product found with id {upc}", EventName, new StackFrame[0], default, new Dictionary<string, Label>
-                {
-                    {"EventSourcesName", new Label(EventName)},
-                    {"EventSourcesType", new Label("Error")}
-                });
-            }
-            
+
             Serilog.Log.Write(LogEventLevel.Error, "[{EventName}] No product found with id {upc}", EventName, upc);
         }
 
@@ -80,25 +73,19 @@ namespace Demo.Tracing
         [Event(4, Level = EventLevel.Critical, Message = "Failed retrieving inventory", Version = 1)]
         private void GetInventoryFailedImpl(Exception ex)
         {
-            var span = Agent.Tracer.CurrentSpan;
-            if (span != null)
-            {
-                span.CaptureError("Failed retrieving inventory", EventName, new EnhancedStackTrace(ex).GetFrames(), default, new Dictionary<string, Label>
+            var executionSegment = Agent.Tracer.GetCurrentExecutionSegment();
+            var frames = new EnhancedStackTrace(ex).GetFrames();
+            executionSegment.CaptureError(
+                "Failed retrieving inventory", 
+                EventName,
+                frames, 
+                executionSegment.ParentId, 
+                new Dictionary<string, Label>
                 {
                     {"EventSourcesName", new Label(EventName)},
                     {"EventSourcesType", new Label("Critical")}
                 });
-            }
-            else
-            {
-                var transaction = Agent.Tracer.CurrentTransaction;
-                transaction.CaptureError("Failed retrieving inventory", EventName, new EnhancedStackTrace(ex).GetFrames(), default, new Dictionary<string, Label>
-                {
-                    {"EventSourcesName", new Label(EventName)},
-                    {"EventSourcesType", new Label("Critical")}
-                });
-            }
-            
+
             Serilog.Log.Write(LogEventLevel.Fatal, "[{EventName}] Failed retrieving inventory", EventName);
         }
     }

@@ -17,6 +17,6 @@ namespace Demo.Accounts
                 {
                     webBuilder.UseStartup<Startup>();
                 })
-                .UseTracing();
+                .UseObservability();
     }
 }

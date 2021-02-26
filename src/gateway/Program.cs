@@ -17,6 +17,6 @@ namespace Demo.Gateway
                 {
                     webBuilder.UseStartup<Startup>();
                 })
-                .UseTracing();
+                .UseObservability();
     }
 }

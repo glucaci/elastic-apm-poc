@@ -353,4 +353,5 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 launchSettings.json
-cloud-apm-server.env
+cloud*.env
+deployment/

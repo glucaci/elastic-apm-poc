@@ -25,9 +25,9 @@ namespace Demo.Tracing
         [Event(1, Level = EventLevel.Informational, Message = "Get inventory {2}", Version = 1)]
         private void GetInventoryImpl(int upc)
         {
-            Serilog.Log.Write(LogEventLevel.Information, "[{EventName}] Get inventory {upc}", EventName, upc);
+            AppLog.Write(EventName, LogEventLevel.Information, "Get inventory {Upc}", upc);
         }
-
+        
         [NonEvent]
         public void LowInventory(int stock)
         {
@@ -37,7 +37,7 @@ namespace Demo.Tracing
         [Event(2, Level = EventLevel.Warning, Message = "Inventory running low. Remaining stock {2}", Version = 1)]
         private void LowInventoryImpl(int stock)
         {
-            Serilog.Log.Write(LogEventLevel.Warning, "[{EventName}] Inventory running low. Remaining stock {stock}", EventName, stock);
+            AppLog.Write(EventName, LogEventLevel.Warning, "Inventory running low. Remaining stock {Stock}", stock);
         }
 
         [NonEvent]
@@ -61,7 +61,7 @@ namespace Demo.Tracing
                     {"EventSourcesType", new Label("Error")}
                 });
 
-            Serilog.Log.Write(LogEventLevel.Error, "[{EventName}] No product found with id {upc}", EventName, upc);
+            AppLog.Write(EventName, LogEventLevel.Error, "No product found with id {Upc}", upc);
         }
 
         [NonEvent]
@@ -76,7 +76,7 @@ namespace Demo.Tracing
             var executionSegment = Agent.Tracer.GetCurrentExecutionSegment();
             var frames = new EnhancedStackTrace(ex).GetFrames();
             executionSegment.CaptureError(
-                "Failed retrieving inventory", 
+                "Failed retrieving inventory",
                 EventName,
                 frames, 
                 executionSegment.ParentId, 
@@ -86,7 +86,7 @@ namespace Demo.Tracing
                     {"EventSourcesType", new Label("Critical")}
                 });
 
-            Serilog.Log.Write(LogEventLevel.Fatal, "[{EventName}] Failed retrieving inventory", EventName);
+            AppLog.Write(EventName, LogEventLevel.Fatal, "Failed retrieving inventory");
         }
     }
 }

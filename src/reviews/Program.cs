@@ -17,6 +17,6 @@ namespace Demo.Reviews
                 {
                     webBuilder.UseStartup<Startup>();
                 })
-                .UseTracing();
+                .UseObservability();
     }
 }

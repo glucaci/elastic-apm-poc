@@ -5,7 +5,7 @@ services:
     bindings:
       - port: 5010
     env_file: 
-      - ./tye/local-apm-server.env
+      - ./env/local-apm-server.env
     env:
       - ELASTIC_APM_SERVICE_NAME=gateway
   
@@ -14,7 +14,7 @@ services:
     bindings:
       - port: 5011
     env_file: 
-      - ./tye/local-apm-server.env
+      - ./env/local-apm-server.env
     env:
       - ELASTIC_APM_SERVICE_NAME=accounts
 
@@ -23,7 +23,7 @@ services:
     bindings:
       - port: 5012
     env_file: 
-      - ./tye/local-apm-server.env
+      - ./env/local-apm-server.env
     env:
       - ELASTIC_APM_SERVICE_NAME=inventory
 
@@ -32,7 +32,7 @@ services:
     bindings:
       - port: 5013
     env_file: 
-      - ./tye/local-apm-server.env
+      - ./env/local-apm-server.env
     env:
       - ELASTIC_APM_SERVICE_NAME=products
 
@@ -41,9 +41,9 @@ services:
     bindings:
       - port: 5014
     env_file: 
-      - ./tye/local-apm-server.env
+      - ./env/local-apm-server.env
     env:
       - ELASTIC_APM_SERVICE_NAME=reviews
 
   - name: apm-server
-    include: ./tye/tye-apm-server.yaml
+    include: ./tye-apm-server.yaml

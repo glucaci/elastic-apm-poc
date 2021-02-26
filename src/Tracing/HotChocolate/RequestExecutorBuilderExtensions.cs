@@ -6,7 +6,7 @@ namespace Demo.Tracing
 {
     public static class RequestExecutorBuilderExtensions
     {
-        public static IRequestExecutorBuilder AddTracing(
+        public static IRequestExecutorBuilder AddObservability(
             this IRequestExecutorBuilder builder)
         {
             if (builder == null)

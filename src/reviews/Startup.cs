@@ -1,6 +1,9 @@
+using System;
 using Demo.Tracing;
+using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -15,7 +18,7 @@ namespace Demo.Reviews
             services
                 .AddSingleton<ReviewRepository>()
                 .AddGraphQLServer()
-                .AddTracing()
+                .AddObservability()
                 .AddQueryType<Query>();
         }
 
@@ -31,7 +34,16 @@ namespace Demo.Reviews
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGraphQL();
+                endpoints.Map("/live", async ctx =>
+                {
+                    await ctx.Response.WriteAsync($"UTC {DateTime.UtcNow.ToUniversalTime()}");
+                });
+                endpoints
+                    .MapGraphQL()
+                    .WithOptions(new GraphQLServerOptions
+                    {
+                        Tool = { Enable = false }
+                    });
             });
         }
     }

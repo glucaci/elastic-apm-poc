@@ -17,6 +17,6 @@ namespace Demo.Inventory
                 {
                     webBuilder.UseStartup<Startup>();
                 })
-                .UseTracing();
+                .UseObservability();
     }
 }

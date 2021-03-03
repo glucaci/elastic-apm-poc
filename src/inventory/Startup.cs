@@ -1,6 +1,7 @@
 using System;
 using Demo.Tracing;
 using HotChocolate.AspNetCore;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +17,14 @@ namespace Demo.Inventory
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .AddMassTransit(c =>
+                {
+                    c.UsingRabbitMq((context, cfg) =>
+                    {
+                        cfg.Host("localhost");
+                    });
+                })
+                .AddMassTransitHostedService()
                 .AddSingleton<InventoryInfoRepository>()
                 .AddGraphQLServer()
                 .AddObservability()

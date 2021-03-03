@@ -64,7 +64,6 @@ namespace Demo.Gateway
 
             app.UseRouting();
 
-            app.UseObservability();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.Map("/live", async ctx =>

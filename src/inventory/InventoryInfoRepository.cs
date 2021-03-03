@@ -24,12 +24,6 @@ namespace Demo.Inventory
             // Simulate info
             Log.GetInventory(upc);
 
-            if (upc > 1)
-            {
-                // Simulate warning
-                Log.LowInventory(_infos.Count);
-            }
-
             if (upc > 3)
             {
                 // Simulate error

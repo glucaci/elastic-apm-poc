@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using Demo.Tracing;
 using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MongoDB.Extensions.Context;
 
 namespace Demo.Accounts
 {
@@ -16,7 +16,15 @@ namespace Demo.Accounts
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            MongoOptions dbOptions = new MongoOptions
+            {
+                ConnectionString = Environment.GetEnvironmentVariable("MONGODB_CONNECTION"),
+                DatabaseName = "accounts"
+            };
+
             services
+                .AddSingleton(dbOptions)
+                .AddSingleton<DbContext>()
                 .AddSingleton<UserRepository>()
                 .AddGraphQLServer()
                 .AddObservability()
@@ -33,7 +41,6 @@ namespace Demo.Accounts
 
             app.UseRouting();
 
-            app.UseObservability();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.Map("/live", async ctx =>

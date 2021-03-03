@@ -1,114 +1,60 @@
 ﻿using System;
-using System.Linq;
 using Elastic.Apm.AspNetCore.DiagnosticListener;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.Extensions.Hosting;
+using Elastic.Apm.Mongo;
 using Elastic.Apm.SerilogEnricher;
-using Elastic.CommonSchema;
 using Elastic.CommonSchema.Serilog;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Context;
 using Serilog.Sinks.Elasticsearch;
+using Tracing.MassTransit;
 
 namespace Demo.Tracing
 {
     public static class HostBuilderExtensions
     {
-        public static void UseObservability(this IApplicationBuilder app)
-        {
-            app.Use(async (httpContext, next) =>
-            {
-                var user = httpContext.User.Identity.IsAuthenticated 
-                    ? httpContext.User.Identity.Name 
-                    : "anonymous";
-                LogContext.PushProperty("User", user);
-
-                var hostIp = httpContext.Connection.RemoteIpAddress.ToString();
-                LogContext.PushProperty(
-                    "HostIp", !string.IsNullOrWhiteSpace(hostIp) ? hostIp : "unknown");
-
-                await next.Invoke();
-            });
-        }
-
         public static IHostBuilder UseObservability(this IHostBuilder builder)
         {
             return builder
-                .UseSerilog((ctx, _, config) =>
+                .ConfigureServices((_, services) =>
                 {
-                    ConfigureLogging(config, ctx.Configuration);
+                    services.AddHttpContextAccessor();
+                })
+                .UseSerilog((ctx, sp, config) =>
+                {
+                    ConfigureLogging(config, ctx.Configuration, sp.GetService<IHttpContextAccessor>());
                 })
                 .UseElasticApm(
                     new AspNetCoreDiagnosticSubscriber(),
-                    new HttpDiagnosticsSubscriber());
+                    new HttpDiagnosticsSubscriber(),
+                    new MongoDiagnosticsSubscriber(),
+                    new MassTransitDiagnosticsSubscriber());
         }
 
         private static void ConfigureLogging(
             LoggerConfiguration loggerConfiguration,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IHttpContextAccessor httpContextAccessor)
         {
             var environment = Environment.GetEnvironmentVariable("ELASTIC_APM_ENVIRONMENT");
             var applicationName = Environment.GetEnvironmentVariable("ELASTIC_APM_SERVICE_NAME");
             var applicationPart = Environment.GetEnvironmentVariable("ELASTIC_APM_SERVICE_NAME");
 
             var formatterConfiguration = new EcsTextFormatterConfiguration();
+            formatterConfiguration.MapHttpContext(httpContextAccessor);
+            formatterConfiguration.MapCurrentThread(true);
+            formatterConfiguration.MapExceptions(false);
             formatterConfiguration.MapCustom((elasticLog, serilogLog) =>
             {
-                elasticLog.Event.Reference = applicationName;
+                elasticLog.Event.Dataset = applicationName;
+
                 if (serilogLog.TryGetScalarPropertyValue("EventName", out var eventName))
                 {
-                    var dataset = (string)eventName.Value;
-                    var category = new[] { "application" };
-                    var type = new[] {dataset};
-                    if (elasticLog.Event != null)
-                    {
-                        elasticLog.Event.Dataset = dataset;
-
-                        elasticLog.Event.Category = elasticLog.Event.Category is {Length: > 0}
-                            ? elasticLog.Event.Category.Concat(category).ToArray()
-                            : category;
-
-                        elasticLog.Event.Type = elasticLog.Event.Type is {Length: > 0}
-                            ? elasticLog.Event.Type.Concat(type).ToArray()
-                            : type;
-                    }
-                    else
-                    {
-                        elasticLog.Event = new Event
-                        {
-                            Dataset = dataset, 
-                            Category = category,
-                            Type = type
-                        };
-                    }
-                }
-
-                if (serilogLog.TryGetScalarPropertyValue("HostIp", out var hostIp))
-                {
-                    var value = new[] {(string) hostIp.Value};
-                    if (elasticLog.Host != null)
-                    {
-                        elasticLog.Host.Ip = value;
-                    }
-                    else
-                    {
-                        elasticLog.Host = new Host {Ip = value};
-                    }
-                }
-
-                if (serilogLog.TryGetScalarPropertyValue("User", out var username))
-                {
-                    if (elasticLog.User != null)
-                    {
-                        elasticLog.User.Name = (string) username.Value;
-                    }
-                    else
-                    {
-                        elasticLog.User = new User {Name = (string) username.Value};
-                    }
+                    elasticLog.Event.Provider = (string) eventName.Value;
                 }
 
                 return elasticLog;
@@ -139,8 +85,6 @@ namespace Demo.Tracing
                 .Enrich.WithElasticApmCorrelationInfo()
                 .Enrich.WithMachineName()
                 .Enrich.WithProperty("Environment", environment)
-                .Enrich.WithProperty("ApplicationName", applicationName)
-                .Enrich.WithProperty("ApplicationPart", applicationPart)
                 .Enrich.FromLogContext()
                 .WriteTo.Elasticsearch(elasticsearchSinkOptions);
         }

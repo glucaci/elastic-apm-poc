@@ -1,11 +1,13 @@
 using System;
 using Demo.Tracing;
 using HotChocolate.AspNetCore;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Tracing.MassTransit;
 
 namespace Demo.Products
 {
@@ -16,6 +18,17 @@ namespace Demo.Products
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .AddMassTransit(c =>
+                {
+                    c.AddConsumer<OrderConsumer>();
+                    c.UsingRabbitMq((context, cfg) =>
+                    {
+                        cfg.UseSendFilter(typeof(CorrelationFilter<>), context);
+                        cfg.Host("localhost");
+                        cfg.ReceiveEndpoint("orders", e => e.ConfigureConsumer<OrderConsumer>(context));
+                    });
+                })
+                .AddMassTransitHostedService()
                 .AddSingleton<ProductRepository>()
                 .AddGraphQLServer()
                 .AddObservability()

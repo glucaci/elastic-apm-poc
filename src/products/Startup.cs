@@ -23,7 +23,6 @@ namespace Demo.Products
                     c.AddConsumer<OrderConsumer>();
                     c.UsingRabbitMq((context, cfg) =>
                     {
-                        cfg.UseSendFilter(typeof(CorrelationFilter<>), context);
                         cfg.Host("localhost");
                         cfg.ReceiveEndpoint("orders", e => e.ConfigureConsumer<OrderConsumer>(context));
                     });

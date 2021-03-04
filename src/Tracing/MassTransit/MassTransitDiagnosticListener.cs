@@ -5,6 +5,7 @@ using System.Diagnostics;
 using Demo.Tracing;
 using Elastic.Apm;
 using Elastic.Apm.Api;
+using MassTransit;
 
 namespace Tracing.MassTransit
 {
@@ -30,13 +31,13 @@ namespace Tracing.MassTransit
             switch (value.Key)
             {
                 case "MassTransit.Transport.Send.Start":
-                    HandleSendStart(Activity.Current);
+                    HandleSendStart(Activity.Current, value.Value);
                     return;
                 case "MassTransit.Transport.Send.Stop":
-                    HandleStop(Activity.Current);
+                    HandleSendStop(Activity.Current);
                     return;
                 case "MassTransit.Transport.Receive.Start":
-                    HandleReceiveStart(Activity.Current);
+                    HandleReceiveStart(Activity.Current, value.Value);
                     return;
                 case "MassTransit.Transport.Receive.Stop":
                     HandleStop(Activity.Current);
@@ -52,24 +53,42 @@ namespace Tracing.MassTransit
         {
         }
 
-        private void HandleSendStart(Activity activity)
+        private static readonly string _type = "messaging";
+
+        private void HandleSendStart(Activity activity, object? context)
         {
             IExecutionSegment? executionSegment = _apmAgent.Tracer.GetCurrentExecutionSegment();
-            if (executionSegment != null)
+            if (executionSegment != null && context is SendContext sendContext)
             {
-                var span = executionSegment.StartSpan("Send", "messaging", "masstransit");
-                span.Action = "send";
-                executionSegment = span;
+                var spanName = context is PublishContext ? "Publish" : "Send";
+                spanName = $"{spanName} {sendContext.DestinationAddress.AbsolutePath}";
+                var subType = sendContext.DestinationAddress.Scheme;
 
-                _activities.TryAdd(activity.SpanId, executionSegment);
+                var span = executionSegment.StartSpan(spanName, _type, subType, "send");
+                sendContext.Headers.Set("ElasticApm", span.OutgoingDistributedTracingData.SerializeToString());
+                _activities.TryAdd(activity.SpanId, span);
             }
         }
 
-        private void HandleReceiveStart(Activity activity)
+        private void HandleReceiveStart(Activity activity, object? context)
         {
-            var transaction = _apmAgent.Tracer.StartTransaction("Receive", "messaging");
+            if (context is ReceiveContext receiveContext)
+            {
+                var rawTracingData = receiveContext.TransportHeaders.Get<string>("ElasticApm");
+                var tracingData = DistributedTracingData.TryDeserializeFromString(rawTracingData);
 
-            _activities.TryAdd(activity.SpanId, transaction);
+                var transactionName = $"Receive {receiveContext.InputAddress.AbsolutePath}";
+                var transaction = _apmAgent.Tracer.StartTransaction(transactionName, _type, tracingData);
+                _activities.TryAdd(activity.SpanId, transaction);
+            }
+        }
+
+        private void HandleSendStop(Activity activity)
+        {
+            if (_activities.TryRemove(activity.SpanId, out var executionSegment))
+            {
+                executionSegment.End();
+            }
         }
 
         private void HandleStop(Activity activity)

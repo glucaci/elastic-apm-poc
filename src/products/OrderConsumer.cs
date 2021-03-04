@@ -9,7 +9,7 @@ namespace Demo.Products
     {
         public async Task Consume(ConsumeContext<Order> context)
         {
-            await Task.Delay(TimeSpan.FromSeconds(1));
+            await Task.Delay(TimeSpan.FromMilliseconds(50));
         }
     }
 }

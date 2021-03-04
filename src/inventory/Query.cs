@@ -15,9 +15,11 @@ namespace Demo.Inventory
         {
             try
             {
+                bus.Publish(new Order { Count = 5 });
+
                 if (upc > 1)
                 {
-                    bus.Publish(new Order {Count = 5});
+                    // Simulate warning
                     Log.LowInventory(3);
                 }
 

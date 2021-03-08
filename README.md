@@ -1,4 +1,6 @@
-## GraphQL Observability with Elastic APM and HotChocolate
+## Elastic .NET Observability (GraphQL, MassTransit, MongoDB)
+
+Work from this POC has generated couple of elastic apm extensions packages which could be found [here](https://github.com/SwissLife-OSS/elastic-apm-extensions).
 
 ### Quick start
 
@@ -36,3 +38,5 @@ Sample trace:
 GraphQL Sample: https://github.com/ChilliCream/hotchocolate-examples/tree/master/misc/Stitching/centralized
 
 Elastic APM Agent: https://github.com/elastic/apm-agent-dotnet
+
+MongoDB instrumentation: https://github.com/vhatsura/elastic-apm-mongo

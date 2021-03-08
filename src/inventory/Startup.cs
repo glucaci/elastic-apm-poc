@@ -1,5 +1,5 @@
 using System;
-using Demo.Tracing;
+using Elastic.Apm.GraphQL.HotChocolate;
 using HotChocolate.AspNetCore;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;

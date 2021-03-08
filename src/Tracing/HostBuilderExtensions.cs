@@ -2,6 +2,7 @@
 using Elastic.Apm.AspNetCore.DiagnosticListener;
 using Elastic.Apm.DiagnosticSource;
 using Elastic.Apm.Extensions.Hosting;
+using Elastic.Apm.Messaging.MassTransit;
 using Elastic.Apm.Mongo;
 using Elastic.Apm.SerilogEnricher;
 using Elastic.CommonSchema.Serilog;
@@ -11,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
-using Tracing.MassTransit;
 
 namespace Demo.Tracing
 {

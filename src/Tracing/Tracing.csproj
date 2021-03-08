@@ -27,6 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ElasticApm.Messaging.MassTransit" Version="1.0.0-preview.3" />
+    <PackageReference Include="ElasticApm.GraphQL.HotChocolate" Version="1.0.0-preview.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Thor.Core.Abstractions" Version="4.0.0" />
   </ItemGroup>
 

@@ -5,11 +5,11 @@ using Serilog.Events;
 
 namespace Demo.Tracing
 {
-    public static class AppLog
+    internal static class AppLog
     {
         private static string EventNameProperty = "EventName";
 
-        public static void Write(
+        internal static void Write(
             string eventName, 
             LogEventLevel logEventLevel, 
             string message, 

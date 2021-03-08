@@ -1,6 +1,5 @@
 using System;
-using System.Threading.Tasks;
-using Demo.Tracing;
+using Elastic.Apm.GraphQL.HotChocolate;
 using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

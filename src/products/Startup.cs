@@ -1,5 +1,5 @@
 using System;
-using Demo.Tracing;
+using Elastic.Apm.GraphQL.HotChocolate;
 using HotChocolate.AspNetCore;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Tracing.MassTransit;
 
 namespace Demo.Products
 {

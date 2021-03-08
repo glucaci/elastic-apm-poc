@@ -49,7 +49,7 @@ namespace Demo.Tracing
         [Event(3, Level = EventLevel.Error, Message = "No product found with id {2}", Version = 1)]
         private void NoProductImpl(int upc)
         {
-            var executionSegment = Agent.Tracer.GetCurrentExecutionSegment();
+            var executionSegment = Agent.Tracer.GetExecutionSegment();
             executionSegment.CaptureError(
                 $"No product found with id {upc}", 
                 EventName, 
@@ -73,7 +73,7 @@ namespace Demo.Tracing
         [Event(4, Level = EventLevel.Critical, Message = "Failed retrieving inventory", Version = 1)]
         private void GetInventoryFailedImpl(Exception ex)
         {
-            var executionSegment = Agent.Tracer.GetCurrentExecutionSegment();
+            var executionSegment = Agent.Tracer.GetExecutionSegment();
             var frames = new EnhancedStackTrace(ex).GetFrames();
             executionSegment.CaptureError(
                 "Failed retrieving inventory",
